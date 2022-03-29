@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 #ifdef __linux__
     #define OS 0
 #elif _WIN32
@@ -12,6 +13,7 @@ using namespace std;
     void smsBienvenida();
     void menu (int opcion);
     bool isWindows();
+    void subMenu(int opcion, char area [12]);
 
 int main () {
     setlocale(LC_ALL, "spanish");
@@ -34,18 +36,33 @@ int main () {
             cin.ignore();
             cout<<"ERROR: OPCIÓN INVALIDA \n";
             cout<<"Presione ENTER e intentelo de Nuevo...\n";
+
+            //OPTIMIZAR DESDE AQUÍ....
+            if (isWindows()) {
+                system("pause");
+                system("cls");
+            } else {
+                cin.ignore();
+                getch();
+                system("clear");
+            }
+        } else if (menuOpc < 1 || menuOpc > 6){
+            cin.clear();
+            cin.ignore();
+            cout<<"ERROR: OPCIÓN INVALIDA \n";
+            cout<<"Presione ENTER e intentelo de Nuevo...\n";
+
+            if (isWindows()) {
+                system("pause");
+                system("cls");
+            } else {
+                getch();
+                system("clear");
+            }
+            //HASTA AQUI-----
         } else {
             menu(menuOpc);
         }
-
-        if (isWindows()) {
-            system("pause");
-            system("cls");
-        } else {
-            system("sleep 2s");
-            system("clear");
-        }
-
     } while (menuOpc < 1 || menuOpc > 6);
 }
 
@@ -57,20 +74,28 @@ void smsBienvenida () {
 }
 
 void menu(int opcion) {
+
+    char titulo [5][20] = {"Sucursal", "Proveedor", "Articulo", "Reportes"};
+
     switch (opcion) {
-        case 1:
+        case 1: 
+            subMenu(1, titulo[0]);
             break;
 
         case 2:
+            subMenu(2, titulo[1]);
             break;
 
         case 3:
+            subMenu(3, titulo[2]);
             break;
 
         case 4:
+            subMenu(4, titulo[3]);
             break;
 
         case 5:
+            subMenu(5, titulo[4]);
             break;
 
         case 6:
@@ -79,7 +104,52 @@ void menu(int opcion) {
             } else {
                 system("clear");
             }
-            cout<<"Saliendo del programa...";
+            cout<<"Saliendo del programa...\n";
+            break;
+
+        default:
+            break;
+    }
+}
+
+//Registrar sucursal
+// Modificar sucursal
+// Ver registro de sucursales
+// Regresar al menú
+
+
+void subMenu (int opcion, char area[25]) {
+    int subMenu = 0;
+    switch (opcion) {
+        case 1: case 2:
+            smsBienvenida();
+            cout<<"Ingresando a "<<area<<"es...\n";
+            cout<<"1) Registrar "<<area<<endl;
+            cout<<"2) Modificar "<<area<<endl;
+            cout<<"3) Ver registro de "<<area<<"es";
+            cout<<"4) Regresar al menú";
+            break;
+
+        case 3:
+            smsBienvenida();
+            cout<<"Ingresando a "<<area<<"es...\n";
+            cout<<"1) Registrar "<<area<<endl;
+            cout<<"2) Modificar "<<area<<endl;
+            cout<<"3) Ver registro de "<<area<<"s\n";
+            cout<<"4) Regresar al menú\n";
+            break;
+
+        case 4:
+            smsBienvenida();
+            cout<<"Ingresando a "<<area<<"es...\n";
+            cout<<"1) Registro de entrada de inventarios\n";
+            cout<<"2) Registro de salida de inventarios\n";
+            break;
+
+        case 5:
+            smsBienvenida();
+            cout<<"Reporte de Inventarios";
+            cout<<"Reporte de Movimientos";
             break;
 
         default:
