@@ -24,7 +24,6 @@ int main () {
     char usuarioIngresado [13];
     char contraIngresada [16];
 
-
     int menu;
 
     cout<<"\t\t\tBienvenido al Control de Inventario de\n\t\t\t- Empresa Salesiana María Auxiliadora -"<<endl<<endl;
