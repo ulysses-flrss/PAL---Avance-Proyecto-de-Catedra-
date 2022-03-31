@@ -12,47 +12,62 @@
 using namespace std;
 //Declaracion de funciones ----------------------------
     void smsBienvenida();
+    int menuP();
     void menu (int opcion);
     bool isWindows();
     void subMenu(int opcion, char area [12]);
-    void validacionOpciones (int opcionElegida, int primeraOpcion, int ultimaOpcion);
+    int subMenuOpcs (int opcion, char area[25]);
+    int validacionOpciones (int opcionElegida, int primeraOpcion, int ultimaOpcion);
     void enConstruccion();
     void subMenu2 (int opcion);
-    void sucursales(int opcion);
-//-----------------------------------------------------
+    void sucursales (int opcion);
+    //char campos[6] = {"Id", "Descripción", "Dirección","Teléfono", "Encargado", "País"};
     string camposSu[] = {"Id", "Descripción", "Dirección","Teléfono", "Encargado", "País"};
     string sucursalesM [SUCURSALES_MAX][6];
+//-----------------------------------------------------
 int main () {
     setlocale(LC_ALL, "spanish");
+	sucursalesM[0][0] = "S001";
+	sucursalesM[0][1] = "Sucursal Principal";
+	sucursalesM[0][2] = "Km 1 1/2 Calle a Plan del Pino, Ciudadela Don Bosco 884204 Soyapango, El Salvador";
+	sucursalesM[0][3] = "2251 5000";
+	sucursalesM[0][4] = "Leandro García";
+	sucursalesM[0][5] = "El Salvador";
     int menuOpc;
-
+    int validacion;
+    
     do {
         smsBienvenida();
-        cout << "1)   Sucursal \n";
-        cout << "2)   Proveedores \n";
-        cout << "3)   ArtÃ­culos \n";
-        cout << "4)   Movimientos artÃ­culos \n";
-        cout << "5)   Reportes \n";
-        cout << "6)   Salir\n";
-        cout<<"Seleccione la opciÃ³n requerida: \n";
-
-        cin>>menuOpc;
-
-        if(!(menuOpc)) {
-            validacionOpciones (menuOpc, 1, 6);
-        }
-        else {
+        menuOpc = menuP();
+        
+        validacion = validacionOpciones(menuOpc, 1, 6);
+        
+        if(validacion)
             menu(menuOpc);
-        }
         
     } while (menuOpc < 1 || menuOpc > 6);
 }
 
 void smsBienvenida () {
     cout<<"\t\t Sistema de Control de Inventarios\n";
-    cout<<"\t\tEmpresa Salesiana MarÃ­a Auxiliadora\n";
-    cout<<"\t\t      VersiÃ³n del Sistema 1.0\n";
+    cout<<"\t\tEmpresa Salesiana María Auxiliadora\n";
+    cout<<"\t\t      Versión del Sistema 1.0\n";
     cout<<"\t\t        Techno Developers\n";
+}
+
+int menuP (){
+	int opcionUs = 0;
+    cout << "1)   Sucursal \n";
+    cout << "2)   Proveedores \n";
+    cout << "3)   Artículos \n";
+    cout << "4)   Movimientos artículos \n";
+    cout << "5)   Reportes \n";
+    cout << "6)   Salir\n";
+    cout<<"Seleccione la opciÃ³n requerida: \n";
+
+    cin>>opcionUs;
+    
+    return opcionUs;
 }
 
 void menu(int opcion) {
@@ -97,23 +112,31 @@ void menu(int opcion) {
 
 void subMenu (int opcion, char area[25]) {
     int subMenu = 0;
+    int validacion;
     switch (opcion) {
         case 1: case 2: case 3:
-            smsBienvenida();
-            if (opcion == 3)cout<<"Ingresando a "<<area<<"s...\n";
-            else cout<<"Ingresando a "<<area<<"es...\n";
-            cout<<"1) Registrar "<<area<<endl;
-            cout<<"2) Modificar "<<area<<endl;
-            if (opcion == 3) cout<<"3) Ver registro de "<<area<<"s\n";
-            else cout<<"3) Ver registro de "<<area<<"es\n";
-            cout<<"4) Regresar al menÃº\n";
-            cin>>subMenu;
-            if(!(subMenu)) {
-                validacionOpciones (subMenu, 1, 4);
-            }
-            else {
-                sucursales(subMenu);
-            }
+	        do{
+				smsBienvenida();
+	    		subMenu = subMenuOpcs(opcion, area);
+        		validacion = validacionOpciones(subMenu, 1, 4);
+		        if(validacion){
+		            switch (opcion){
+		            	case 1:
+		            		sucursales(validacion);
+		            		break;
+		            	case 2:
+		            	case 3:
+		            		enConstruccion();
+		            		break;
+					}	
+				}
+	            /*if(!(subMenu)) {
+	                validacionOpciones (subMenu, 1, 4);
+	            }
+	            else {
+	                subMenu2(subMenu);
+	            }*/
+			}while(subMenu >= 1 && subMenu <= 4);
             break;
 
         case 4:
@@ -149,6 +172,19 @@ void subMenu (int opcion, char area[25]) {
     }
 }
 
+int subMenuOpcs (int opcion, char area[25]){
+	int subMenu = 0;
+    if (opcion == 3)cout<<"Ingresando a "<<area<<"s...\n";
+	else cout<<"Ingresando a "<<area<<"es...\n";
+	cout<<"1) Registrar "<<area<<endl;
+    cout<<"2) Modificar "<<area<<endl;
+    if (opcion == 3) cout<<"3) Ver registro de "<<area<<"s\n";
+    else cout<<"3) Ver registro de "<<area<<"es\n";
+    cout<<"4) Regresar al menú\n";
+    cin>>subMenu;
+    return subMenu;
+}
+
 void subMenu2 (int opcion) {
     switch (opcion) {
         case 1: case 2: default:
@@ -166,14 +202,12 @@ bool isWindows () {
     }
 }
 
-
-
-void validacionOpciones (int opcionElegida, int primeraOpcion, int ultimaOpcion) {
+int validacionOpciones (int opcionElegida, int primeraOpcion, int ultimaOpcion) {
     if (!(opcionElegida)) {
             cin.clear();
             cin.ignore();
-            cout<<"ERROR: OPCIÃ“N INVALIDA \n";
-            cout<<"Presione ENTER e intentelo de Nuevo...\n";
+            cout<<"ERROR: OPCIÓN INVÁLIDA \n";
+            cout<<"Presione ENTER e inténtelo de Nuevo...\n";
 
             if (isWindows()) {
                 system("pause");
@@ -186,8 +220,8 @@ void validacionOpciones (int opcionElegida, int primeraOpcion, int ultimaOpcion)
         } else if (opcionElegida < primeraOpcion || opcionElegida > ultimaOpcion){
             cin.clear();
             cin.ignore();
-            cout<<"ERROR: OPCIÃ“N INVALIDA \n";
-            cout<<"Presione ENTER e intentelo de Nuevo...\n";
+            cout<<"ERROR: OPCIÓN INVÁLIDA \n";
+            cout<<"Presione ENTER e inténtelo de Nuevo...\n";
 
             if (isWindows()) {
                 system("pause");
@@ -239,3 +273,7 @@ void sucursales (int opcion){
 			break;
 	}
 }
+
+/*string getCorrelativo (){
+	
+}*/
