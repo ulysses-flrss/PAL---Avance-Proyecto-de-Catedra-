@@ -1,5 +1,7 @@
 #include <iostream>
 #include <conio.h>
+#include <string.h>
+#include <fstream>
 #define CANTIDAD_MAX 10
 #ifdef __linux__
     #define OS 0
@@ -28,26 +30,41 @@ using namespace std;
     
 //-----------------------------------------------------
 
+struct Sucursal {
+	char id[5];
+	char descripcion[90];
+	char direccion[75];
+	char telefono[9];
+	char encargado[35];
+	
+	
+	void rellenarSucursales () {
+			
+	}
+};
 
-    int numSucursal = 0;
-    char id[CANTIDAD_MAX][5];
-    char descripcion [CANTIDAD_MAX][90];
-    char direccion [CANTIDAD_MAX][75];
-    char telefono [CANTIDAD_MAX][9];
-    char encargado [CANTIDAD_MAX][35];
 
-    int numProveedor = 0;
-    char id2[CANTIDAD_MAX][5];
-    char nombre [CANTIDAD_MAX][30];
-    char apellido [CANTIDAD_MAX][30];
-    char identificacion [CANTIDAD_MAX][15];
-    char tipo_identificacion [CANTIDAD_MAX][25];
-    char telefono2 [CANTIDAD_MAX][9];
+struct Proveedor {
+	char id[5];
+	char nombres[90];
+	char apellidos[75];
+	char identificacion[15];
+	char tipo_identificacion[25] ;
+	char telefono[9];
+};
+
+
+struct Usuario {
+	char nombreUsuario[10];
+	char password[10];
+};
+
 
 int main () {
+	Usuario administrador;
+	strcpy(administrador.nombreUsuario, "admin");
+	strcpy(administrador.password, "1234");
     setlocale(LC_ALL, "spanish");
-
-
 
     int menuOpc;
     menuOpc = 0;
@@ -57,11 +74,11 @@ int main () {
         smsBienvenida();
         cout << "1)   Sucursal \n";
 	    cout << "2)   Proveedores \n";
-	    cout << "3)   Art锟絚ulos \n";
-	    cout << "4)   Movimientos art锟絚ulos \n";
+	    cout << "3)   Art韈ulos \n";
+	    cout << "4)   Movimientos art韈ulos \n";
 	    cout << "5)   Reportes \n";
 	    cout << "6)   Salir\n";
-	    cout<<"Seleccione la opci锟絥 requerida: \n";
+	    cout<<"Seleccione la opci髇 requerida: \n";
 	    cin>>menuOpc;
 		
         if(!(menuOpc)){
@@ -77,8 +94,8 @@ int main () {
 
 void smsBienvenida () {
     cout<<"\t\t Sistema de Control de Inventarios\n";
-    cout<<"\t\tEmpresa Salesiana Mar锟絘 Auxiliadora\n";
-    cout<<"\t\t      Versi锟絥 del Sistema 1.0\n";
+    cout<<"\t\tEmpresa Salesiana Mar韆 Auxiliadora\n";
+    cout<<"\t\t      Versi髇 del Sistema 1.0\n";
     cout<<"\t\t        Techno Developers\n\n";
 }
 
@@ -130,7 +147,7 @@ void subMenu (int opcion, char area[25]) {
             cout<<"1) Registrar "<<area<<endl;
             cout<<"2) Modificar "<<area<<endl;
             cout<<"3) Ver registro de "<<area<<"s\n";
-            cout<<"4) Regresar al men锟絓n";
+            cout<<"4) Regresar al men鶿n";
             cin>>subMenu;
 
             if(!(subMenu)){
@@ -178,28 +195,31 @@ void subMenu (int opcion, char area[25]) {
 
 
 void sucursales (int accion) {
+	char titulo [5][25] = {"Sucursal", "Proveedor", "Articulo","Movimientos Art锟絚ulos", "Reporte"};
+	int numSucursal = 1;
+	Sucursal S00[numSucursal];
 
     switch (accion) {
         case 1:
             cout<<"Ingrese el ID (esto es temporal): \n";
             cin.ignore();
-            cin.getline(id[numSucursal], 5, '\n');
+            cin.getline(S00[numSucursal].id , 5, '\n');
             fflush(stdin);  
 
             cout<<"Ingrese la descripci贸n de la sucursal: \n";
-            cin.getline(descripcion[numSucursal], 90, '\n');
+            cin.getline(S00[numSucursal].descripcion , 90, '\n');
             fflush(stdin);  
 
             cout<<"Ingrese la direccion de la sucursal: \n";
-            cin.getline(direccion[numSucursal], 75, '\n');
+            cin.getline(S00[numSucursal].direccion , 75, '\n');
             fflush(stdin);
 
             cout<<"Ingrese el telefono de la sucursal: \n";
-            cin.getline(telefono[numSucursal], 9, '\n');
+            cin.getline(S00[numSucursal].telefono , 9, '\n');
             fflush(stdin);
 
             cout<<"Ingrese el nombre del encargado de la sucursal: \n";
-            cin.getline(encargado[numSucursal], 35, '\n');
+            cin.getline(S00[numSucursal].encargado , 35, '\n');
             fflush(stdin);
 
             numSucursal++;
@@ -209,11 +229,13 @@ void sucursales (int accion) {
 
             if (isWindows()) {
                 system("pause");
-                subMenu(1,"Sucursal");
+                subMenu(1, titulo[0]);
             } else {
                 getch();
-                subMenu(1, "Sucursal");
+                subMenu(1, titulo[0]);
             }
+            
+            numSucursal++;
             break;
 
         case 2:
@@ -221,23 +243,24 @@ void sucursales (int accion) {
             break;
 
         case 3:
+        	
             cout<<"Sucursales Ingresadas: \n";
             for (int i = 0; i<numSucursal; i++) {
-                cout<<"ID: "<<id[i]<<endl;
-                cout<<"Descripcion: "<<descripcion[i]<<endl;
-                cout<<"Direcci贸n: "<<direccion[i]<<endl;
-                cout<<"T茅lefono: "<<telefono[i]<<endl;
-                cout<<"Encargado: "<<encargado[i]<<endl;
+                cout<<"ID: "<<S00[i+1].id<<endl;
+                cout<<"Descripcion: "<<S00[i+1].descripcion<<endl;
+                cout<<"Direcci髇: "<<S00[i+1].direccion<<endl;
+                cout<<"T閘efono: "<<S00[i+1].telefono<<endl;
+                cout<<"Encargado: "<<S00[i+1].encargado<<endl;
                 
             }
 
             if (isWindows()) {
                 system("pause");
-                subMenu(1, "Sucursal");
+                subMenu(1, titulo[0]);
             } else {
                 cin.ignore();
                 getch();
-                subMenu(1, "Sucursal");
+                subMenu(1, titulo[0]);
             }
             break;
             
@@ -248,32 +271,36 @@ void sucursales (int accion) {
 
 void proveedores (int accion) {
 
+char titulo [5][25] = {"Sucursal", "Proveedor", "Articulo","Movimientos Art锟絚ulos", "Reporte"};
+
+int numProveedor = 1;
+Proveedor P00[numProveedor];
 
     switch (accion) {
         case 1:
             cout<<"Ingrese el ID (esto es temporal): \n";
             cin.ignore();
-            cin.getline(id2[numProveedor], 5, '\n');
+            cin.getline(P00[numProveedor].id , 5, '\n');
             fflush(stdin);  
 
             cout<<"Ingrese un nombre del proveedor: \n";
-            cin.getline(nombre[numProveedor], 30, '\n');
+            cin.getline(P00[numProveedor].nombres , 90, '\n');
             fflush(stdin);  
 
             cout<<"Ingrese un apellido del proveedor: \n";
-            cin.getline(apellido[numProveedor], 30, '\n');
+            cin.getline(P00[numProveedor].apellidos , 75, '\n');
             fflush(stdin);
 
             cout<<"Ingrese el n煤mero de identificaci贸n del proveedor: \n";
-            cin.getline(identificacion[numProveedor], 15, '\n');
+            cin.getline(P00[numProveedor].tipo_identificacion , 15, '\n');
             fflush(stdin);
 
             cout<<"Ingrese el tipo de identificaci贸n del proveedor: \n";
-            cin.getline(tipo_identificacion[numProveedor], 25, '\n');
+            cin.getline(P00[numProveedor].identificacion , 25, '\n');
             fflush(stdin);
 
              cout<<"Ingrese el telefono del proveedor: \n";
-            cin.getline(telefono2[numProveedor], 9, '\n');
+            cin.getline(P00[numProveedor].telefono , 9, '\n');
             fflush(stdin);
 
             numProveedor++;
@@ -283,10 +310,10 @@ void proveedores (int accion) {
 
             if (isWindows()) {
                 system("pause");
-                subMenu(2, "Proveedor");
+                subMenu(2, titulo[1]);
             } else {
                 getch();
-                subMenu(2, "Proveedor");
+                subMenu(2, titulo[1]);
             }
             break;
 
@@ -297,22 +324,22 @@ void proveedores (int accion) {
         case 3:
             cout<<"Proveedores Ingresados: \n";
             for (int i = 0; i<numProveedor; i++) {
-                cout<<"ID: "<<id2[i]<<endl;
-                cout<<"Nombre: "<<nombre[i]<<endl;
-                cout<<"Apellido: "<<apellido[i]<<endl;
-                cout<<"Identificaci贸n: "<<identificacion[i]<<endl;
-                cout<<"Tipo de Identificaci贸n: "<<tipo_identificacion[i]<<endl;
-                cout<<"Telefono: "<<telefono2[i]<<endl;
+                cout<<"ID: "<<P00[numProveedor].id<<endl;
+                cout<<"Nombre: "<<P00[numProveedor].nombres<<endl;
+                cout<<"Apellido: "<<P00[numProveedor].apellidos<<endl;
+                cout<<"Identificaci贸n: "<<P00[numProveedor].identificacion<<endl;
+                cout<<"Tipo de Identificaci贸n: "<<P00[numProveedor].tipo_identificacion<<endl;
+                cout<<"Telefono: "<<P00[numProveedor].telefono<<endl;
 
             }
 
             if (isWindows()) {
                 system("pause");
-                subMenu(2, "Proveedor");
+                subMenu(2, titulo[1]);
             } else {
                 cin.ignore();
                 getch();
-                subMenu(2, "Proveedor");
+                subMenu(2, titulo[1]);
             }
             break;
             
