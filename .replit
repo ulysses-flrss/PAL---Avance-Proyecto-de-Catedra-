@@ -1,2 +1,2 @@
 language = "cpp"
-run = "[./PROYECTO_FINAL_PAL]"
+run = "./PROYECTO_FINAL_PAL"
