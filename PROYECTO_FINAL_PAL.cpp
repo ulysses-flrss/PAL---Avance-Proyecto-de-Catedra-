@@ -1,10 +1,9 @@
 #include <iostream>
-#include <fstream>
-#include <cstring>
 #include "inc/functions.h"
 using namespace std;
 
 int main ()  {
+	setlocale (LC_ALL, "spanish");
 	login();
 	return 0;
 }
