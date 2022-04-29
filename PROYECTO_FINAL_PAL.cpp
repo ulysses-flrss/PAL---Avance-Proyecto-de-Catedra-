@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <fstream>
 #include <cstring>
-#include "inc/login.h"
+#include "inc/functions.h"
 using namespace std;
 
 int main ()  {
@@ -10,5 +10,5 @@ int main ()  {
 	return 0;
 }
 
-
+	
 
