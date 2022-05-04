@@ -295,6 +295,10 @@ void changePassword(int cargo, struct Usuario admin, struct Usuario supervisor) 
 				menu_login(admin, supervisor);
 			} else {
 				cout << "Contrasen\u0303a incorrecta...Le restan " << intento << " Intentos\n";
+				if (intento == 0) {
+				cout<<"INTENTOS MA\u0303XIMOS. CERRANDO PROGRAMA";
+				break;
+			}
 			}
 		} else if (strcmp(user, supervisor.username) == 0) {
 			cout << "Ingrese su contrasen\u0303a actual\n";
@@ -306,9 +310,18 @@ void changePassword(int cargo, struct Usuario admin, struct Usuario supervisor) 
 				login(admin, supervisor);
 			} else {
 				cout << "Contrasen\u0303a incorrecta...Le restan " << intento << " Intentos\n";
+				if (intento == 0) {
+					cout<<"INTENTOS MA\u0303XIMOS. CERRANDO PROGRAMA";
+				break;
+			}
 			}
 		} else{
 			cout << "Usuario invalido. Le restan " << intento << " Intentos";
+			if (intento == 0) {
+				cout<<"INTENTOS MA\u0303XIMOS. CERRANDO PROGRAMA";
+				break;
+			}
+
 		}
 
 		intento--;
