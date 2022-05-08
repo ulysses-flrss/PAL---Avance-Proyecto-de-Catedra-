@@ -17,9 +17,9 @@ struct Usuario{
 
 struct Movimiento {
     int id = 0; //numero incrementable de 1 en uno
-    int tipo_origen; // 1- proveedor ; 2-sucursal
+    char tipo_origen[10]; // 1- proveedor ; 2-sucursal
     char id_origen[10]; // id del proveedor/sucursal de origen
-    int tipo_destino; // 1-venta ; 2-sucursal ; 3-venta
+    char tipo_destino[10]; // 1-venta ; 2-sucursal ; 3-venta
     char id_destino[10]; // id del proveedor/sucursal de destino 
     char id_articulo[10]; //id articulo existente
     int cantidad; //cantidad de articulos
@@ -52,8 +52,8 @@ void recoverPassword(int cargo, Usuario admin, Usuario supervisor);
 void welcome()
 {
 	cout<<"\t\t Sistema de Control de Inventarios\n";
-    cout<<"\t\tEmpresa Salesiana Mar�a Auxiliadora\n";
-    cout<<"\t\t      Versi�n del Sistema 1.0\n";
+    cout<<"\t\tEmpresa Salesiana Maria Auxiliadora\n";
+    cout<<"\t\t      Version del Sistema 1.0\n";
     cout<<"\t\t        Techno Developers\n\n";
 }
 
@@ -510,27 +510,65 @@ void crearMovimiento (int tipo) {
 	Movimiento listado_movimientos[MAX];
 	cargarMovimientos(listado_movimientos);
 
-
+	int origen;
     cout<<"Ingrese el Tipo de Origen (Elija un numero) \n";
     cout<<"1- Proveedor\n";
     cout<<"2- Sucursal\n";
-    cin>>listado_movimientos[cant].tipo_origen;
+    
+	while (!(cin>>origen)) {
+			cin.clear();
+			cin.ignore(255, '\n');
+			cout<<"No se permiten letras, presione ENTER e intentelo de nuevo\n";
+			getch();
+			system("clear");
+			system("cls");
+	
+	validacionOpciones(origen, 1, 2);
+	if (origen == 1) strcpy(listado_movimientos[cant].tipo_origen, "Proveedor");
+	else if (origen == 2) strcpy(listado_movimientos[cant].tipo_origen, "Sucursal");
 
 	fflush(stdin);
     cout<<"Digite el ID de origen de acuerdo al tipo de origen previamente seleccionado\n";
     cin>>listado_movimientos[cant].id_origen;
 
+	int destino;
     cout<<"Ingrese el Tipo de Destino (Elija un numero)\n";
     cout<<"1- Proveedor\n";
     cout<<"2- Sucursal\n";
     cout<<"3- Venta\n";
-    cin>>listado_movimientos[cant].tipo_destino;
+	while (!(cin>>destino)) {
+			cin.clear();
+			cin.ignore(255, '\n');
+			cout<<"No se permiten letras, presione ENTER e intentelo de nuevo\n";
+			getch();
+			system("clear");
+			system("cls");
+			
+			cout<<"Ingrese el Tipo de Destino (Elija un numero)\n";
+    		cout<<"1- Proveedor\n";
+		    cout<<"2- Sucursal\n";
+    		cout<<"3- Venta\n";
+		}
+	validacionOpciones(destino, 1, 3);
+	if (destino == 1) strcpy(listado_movimientos[cant].tipo_destino, "Proveedor");
+	else if(destino == 2) strcpy(listado_movimientos[cant].tipo_destino, "Sucursal");
+	else if(destino == 3) strcpy(listado_movimientos[cant].tipo_destino, "Venta"); 
 
     cout<<"Digite el ID de destino de acuerdo al tipo de destino previamente seleccionado\n";
     cin>>listado_movimientos[cant].id_destino;
 
     cout<<"Digite el ID del articulo previamente existente\n";
-    cin>>listado_movimientos[cant].id_articulo;
+    
+	while (!(cin>>listado_movimientos[cant].id_articulo)) {
+			cin.clear();
+			cin.ignore(255, '\n');
+			cout<<"No se permiten letras, presione ENTER e intentelo de nuevo\n";
+			getch();
+			system("clear");
+			system("cls");
+			
+			cout<<"Digite el ID del articulo previamente existente\n";
+		}
 
     cout<<"Escriba la cantidad de articulo que movera\n";
     cin>>listado_movimientos[cant].cantidad;
@@ -571,11 +609,10 @@ void crearMovimiento (int tipo) {
 	cant++;
 	almacenarMovimientos(listado_movimientos);
 	verMovimientos(listado_movimientos);
-
 }
 
 void almacenarMovimientos (Movimiento listado_movimientos[]) {
-		ofstream movimientos;
+	ofstream movimientos;
 
 	movimientos.open("movimientos.dat", ios::binary | ios::app);
 
@@ -595,6 +632,7 @@ void almacenarMovimientos (Movimiento listado_movimientos[]) {
 
 void cargarMovimientos (Movimiento listado_movimientos[]) {
 	ifstream movimientos ("movimientos.dat", ios::binary);
+
 	int tam;
 	cant = 0;
 	if (movimientos.is_open()) {
@@ -603,17 +641,17 @@ void cargarMovimientos (Movimiento listado_movimientos[]) {
 		cant = tam/sizeof(Movimiento);
 		movimientos.seekg(0, ios::beg);
 
-	for(int i=0;i<cant; i++) {
+		for(int i=0;i<cant; i++) {
 
-		movimientos.read((char *)(&listado_movimientos[i].tipo_origen), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].id_origen), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].id_destino), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].id_articulo), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].cantidad), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].motivo_movimiento), sizeof(Movimiento));
-		movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
-	}
+			movimientos.read((char *)(&listado_movimientos[i].tipo_origen), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].id_origen), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].id_destino), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].id_articulo), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].cantidad), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].motivo_movimiento), sizeof(Movimiento));
+			movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+		}
 		movimientos.close();
 
 	}

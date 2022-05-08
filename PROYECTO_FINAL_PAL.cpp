@@ -2,10 +2,7 @@
 #include "inc/functions.h"
 using namespace std;
 
-
-
-int main()
-{
+int main() {
 
 	setlocale(LC_ALL, "spanish");
 	
