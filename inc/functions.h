@@ -3,9 +3,12 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <fstream>
+#define MAX 50
 using namespace std;
 //0303 = ñ
 //0301 = á
+
+int cant = 0;
 
 struct Usuario{
 	char username[15];
@@ -15,21 +18,25 @@ struct Usuario{
 struct Movimiento {
     int id = 0; //numero incrementable de 1 en uno
     int tipo_origen; // 1- proveedor ; 2-sucursal
-    int id_origen; // id del proveedor/sucursal de origen
+    char id_origen[10]; // id del proveedor/sucursal de origen
     int tipo_destino; // 1-venta ; 2-sucursal ; 3-venta
-    int id_destino; // id del proveedor/sucursal de destino 
-    int id_articulo; //id articulo existente
+    char id_destino[10]; // id del proveedor/sucursal de destino 
+    char id_articulo[10]; //id articulo existente
     int cantidad; //cantidad de articulos
     char motivo_movimiento[30]; //Entradas: "Compra de articulos", "Movimientos entre sucursales", ; Salidas: "", "Venta de articulos", "Devolucion";
-    char tipo_movimiento[]; //E = Entrada, S = Salida
+    char tipo_movimiento[2]; //E = Entrada, S = Salida
 };
 
 
 // DECLARACION DE FUNCIONES
-int id_movimiento();
+void crearMovimiento (int tipo);
 void almacenarUsuarios (Usuario admin, Usuario supervisor);
 void cargarUsuarios (Usuario admin, Usuario supervisor);
 void crearMovimiento (int tipo);
+void almacenarMovimientos (Movimiento listado_movimientos[]);
+void verMovimientos (Movimiento listado_movimientos[MAX]);
+void cargarMovimientos (Movimiento listado_movimientos[]);
+
 void welcome();
 void menu_login(Usuario admin, Usuario supervisor);
 void login(Usuario admin, Usuario supervisor);
@@ -57,10 +64,10 @@ void menu_login(struct Usuario admin, struct Usuario supervisor)
 	do
 	{
 		welcome();
-		cout << "\nQue\u0301 desea hacer? (Di\u0301gite un nu\u0301mero)\n";
-		cout << "1- Iniciar sesio\u0301n\n";
-		cout << "2- Cambiar Contrasen\u0303a\n";
-		cout << "3- Recuperar Contrasen\u0303a\n";
+		cout << "\nQue desea hacer? (Digite un numero)\n";
+		cout << "1- Iniciar sesion\n";
+		cout << "2- Cambiar Contrasena\n";
+		cout << "3- Recuperar Contrasena\n";
 		cout << "4- Salir\n";
 
 		while (!(cin>>opc)) {
@@ -72,10 +79,10 @@ void menu_login(struct Usuario admin, struct Usuario supervisor)
 			system("cls");
 			
 			welcome();
-			cout << "\nQue\u0301 desea hacer? (Di\u0301gite un nu\u0301mero)\n";
-			cout << "1- Iniciar sesio\u0301n\n";
-			cout << "2- Cambiar Contrasen\u0303a\n";
-			cout << "3- Recuperar Contrasen\u0303a\n";
+			cout << "\nQue desea hacer? (Digite un numero)\n";
+			cout << "1- Iniciar sesion\n";
+			cout << "2- Cambiar Contrasena\n";
+			cout << "3- Recuperar Contrasena\n";
 			cout << "4- Salir\n";
 		}
 		
@@ -115,7 +122,7 @@ void login(struct Usuario admin, struct Usuario supervisor)
 	cout << "Ingrese su nombre de usuario: \n";
 	cin >> userBuff;
 
-	cout << "Ingrese su contrasen\u0303a: \n";
+	cout << "Ingrese su contrasena: \n";
 	cin >> passBuff;
 
 	validarUsuario(userBuff, passBuff, admin, supervisor);
@@ -128,7 +135,7 @@ void validarUsuario(char userBuff[15], char passBuff[15], struct Usuario admin, 
 	}else if (strcmp(supervisor.username, userBuff) == 0 && strcmp(supervisor.password, passBuff) == 0) {
 		menuSupervisor();
 	} else {
-		cout << "ERROR: Nombre o Usuario Incorrectos. Presione ENTER e Inte\u0301ntelo de Nuevo \n";
+		cout << "ERROR: Nombre o Usuario Incorrectos. Presione ENTER e Intentelo de Nuevo \n";
 		cin.ignore();
 		getch();
 		login(admin, supervisor);
@@ -141,14 +148,14 @@ void menuAdmin() {
 
 	do{
 		welcome();
-		cout<<"Elija una opcio\u0301n (Di\u0301gite un nu\u0301mero)\n";
+		cout<<"Elija una opcion (Digite un numero)\n";
 		cout << "1)   Sucursales \n";
 		cout << "2)   Proveedores \n";
-		cout << "3)   Arti\u0301culos \n";
-		cout << "4)   Movimientos arti\u0301culos \n";
+		cout << "3)   Articulos \n";
+		cout << "4)   Movimientos articulos \n";
 		cout << "5)   Reportes \n";
 		cout << "6)   Salir\n";
-		cout << "Seleccione la opcio\u0301n requerida: \n";
+		cout << "Seleccione la opcion requerida: \n";
 
 		while (!(cin>>menuOpc)) {
 			cin.clear();
@@ -159,14 +166,14 @@ void menuAdmin() {
 			system("cls");
 			
 			welcome();
-			cout<<"Elija una opci\u0301n (Di\u0301gite un nu\u0301mero)\n";
+			cout<<"Elija una opcin (Digite un numero)\n";
 			cout << "1)   Sucursales \n";
 			cout << "2)   Proveedores \n";
-			cout << "3)   Arti\u0301culos \n";
-			cout << "4)   Movimientos arti\u0301culos \n";
+			cout << "3)   Articulos \n";
+			cout << "4)   Movimientos articulos \n";
 			cout << "5)   Reportes \n";
 			cout << "6)   Salir\n";
-			cout << "Seleccione la opcio\u0301n requerida: \n";
+			cout << "Seleccione la opcion requerida: \n";
 		}
 			validacionOpciones(menuOpc, 1, 6);
 			menuAdmin2(menuOpc);
@@ -175,7 +182,7 @@ void menuAdmin() {
 }
 
 void menuAdmin2(int opcion) {
-	char titulo[5][25] = {"Sucursal", "Proveedor", "Arti\u0301culo", "Movimientos Arti\u0301culos", "Reportes"};
+	char titulo[5][25] = {"Sucursal", "Proveedor", "Articulo", "Movimientos Articulos", "Reportes"};
 
 	switch (opcion) {
 	case 1:
@@ -215,14 +222,14 @@ void subMenuAdmin(int opcion, char area[25]) {
 	switch (opcion) {
 	case 1: case 2: case 3:
 		cout << "Ingresado a " << area << endl;
-		cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)\n";
+		cout<<"Elija una opción (Digite un numero)\n";
 		cout << "1) Registrar " << area << endl;
 		cout << "2) Modificar " << area << endl;
 
 		if (opcion == 3) cout << "3) Ver registro de " << area << "s\n";	
 		else cout << "3) Ver registro de " << area << "es\n";
 
-		cout << "4) Regresar al menu\u0301\n";
+		cout << "4) Regresar al menu\n";
 		while (!(cin>>subMenu)) {
 			cin.clear();
 			cin.ignore(255, '\n');
@@ -233,14 +240,14 @@ void subMenuAdmin(int opcion, char area[25]) {
 			
 			welcome();
 			cout << "Ingresado a " << area << endl;
-			cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)\n";
+			cout<<"Elija una opción (Digite un numero)\n";
 			cout << "1) Registrar " << area << endl;
 			cout << "2) Modificar " << area << endl;
 
 			if (opcion == 3) cout << "3) Ver registro de " << area << "s\n";	
 			else cout << "3) Ver registro de " << area << "es\n";
 
-			cout << "4) Regresar al menu\u0301\n";
+			cout << "4) Regresar al menu\n";
 			}
 				validacionOpciones(subMenu, 1, 6);
 			// if(opcion == 1) sucursales(subMenu);
@@ -250,10 +257,10 @@ void subMenuAdmin(int opcion, char area[25]) {
 	case 4:
 		welcome();
 		cout << "Ingresando a " << area << "...\n";
-		cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)";
+		cout<<"Elija una opción (Digite un numero)\n";
 		cout << "1) Registro de entrada de inventarios\n";
 		cout << "2) Registro de salida de inventarios\n";
-		cout << "3) Regresar al menu\u0301\n";
+		cout << "3) Regresar al menu\n";
 		while (!(cin>>subMenu)) {
 			cin.clear();
 			cin.ignore(255, '\n');
@@ -264,22 +271,40 @@ void subMenuAdmin(int opcion, char area[25]) {
 			
 			welcome();
 			cout << "Ingresando a " << area << "...\n";
-			cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)";
+			cout<<"Elija una opción (Digite un numero)\n";
 			cout << "1) Registro de entrada de inventarios\n";
 			cout << "2) Registro de salida de inventarios\n";
-			cout << "3) Regresar al menu\u0301\n";
+			cout << "3) Regresar al menu\n";
 		}
 			validacionOpciones(subMenu, 1, 3);
 			
+			switch (subMenu)
+			{
+			case 1:
+				crearMovimiento(0);
+				break;
+
+			case 2:
+				crearMovimiento(1);
+				
+				break;
+
+			case 3:
+				menuAdmin();
+				break;
+			
+			default:
+				break;
+			}
 		break;
 
 	case 5:
 		welcome();
 		cout << "Ingresando a " << area << "...\n";
-		cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)";
+		cout<<"Elija una opción (Digite un numero)";
 		cout << "1) Reporte de Inventarios\n";
 		cout << "2) Reporte de Movimientos\n";
-		cout << "3) Regresar al menu\u0301\n";
+		cout << "3) Regresar al menu\n";
 		while (!(cin>>subMenu)) {
 			cin.clear();
 			cin.ignore(255, '\n');
@@ -290,12 +315,14 @@ void subMenuAdmin(int opcion, char area[25]) {
 			
 			welcome();
 			cout << "Ingresando a " << area << "...\n";
-			cout<<"Elija una opción (Di\u0301gite un nu\u0301mero)";
+			cout<<"Elija una opción (Digite un numero)";
 			cout << "1) Reporte de Inventarios\n";
 			cout << "2) Reporte de Movimientos\n";
-			cout << "3) Regresar al menu\u0301\n";
+			cout << "3) Regresar al menu\n";
 		}
 			validacionOpciones(subMenu, 1, 3);
+
+			
 		
 		break;
 
@@ -307,9 +334,9 @@ void subMenuAdmin(int opcion, char area[25]) {
 void menuSupervisor() {
 	int opcion = 0;
 	welcome();
-	cout<<"Elija una opcio\u0301n (Di\u0301gite un nu\u0301mero)\n";
+	cout<<"Elija una opcion (Digite un numero)\n";
 	cout<<"1- Reportes";
-	cout<<"2- Cerrar Sesio\u0301n";
+	cout<<"2- Cerrar Sesion";
 	cin>>opcion;
 
 	switch (opcion)
@@ -335,16 +362,16 @@ void reportes() {
 
 void validacionOpciones(int opcionElegida, int primeraOpcion, int ultimaOpcion) {
 	if (!(opcionElegida) && opcionElegida != 0){
-		cout << "ERROR: OPCIO\u0301N INVA\u0301LIDA \n";
-		cout << "Presione ENTER e inte\u0301ntelo de Nuevo...\n";
+		cout << "ERROR: OPCION INVALIDA \n";
+		cout << "Presione ENTER e intentelo de Nuevo...\n";
 		cin.clear();
 		cin.ignore();
 		getch();
 		system("clear");
 		system("cls");
 	} else if (opcionElegida < primeraOpcion || opcionElegida > ultimaOpcion) {
-		cout << "ERROR: OPCIO\u0301N INVA\u0301LIDA \n";
-		cout << "Presione ENTER e inte\u0301ntelo de Nuevo...\n";
+		cout << "ERROR: OPCION INVALIDA \n";
+		cout << "Presione ENTER e intentelo de Nuevo...\n";
 
 		cin.ignore();
 		getch();
@@ -359,48 +386,48 @@ void changePassword(int cargo, struct Usuario admin, struct Usuario supervisor) 
 
 	int intento = 3;
 
-	cout << "A continuacio\u0301n procedera\u0301 a cambiar su contrasen\u0303a\n";
+	cout << "A continuacion procedera a cambiar su contrasena\n";
 	do {
 		intento--;
 		cout << "Ingrese su usuario:\n";
 		cin >> user;
 
 		if (strcmp(user, admin.username) == 0) {
-			cout << "Ingrese su contrasen\u0303a actual\n";
+			cout << "Ingrese su contrasena actual\n";
 			cin >> currentPassword;
 			if (strcmp(currentPassword, admin.password) == 0) {
-				cout << "Ingrese su nueva contrasen\u0303a\n";
+				cout << "Ingrese su nueva contrasena\n";
 				cin >> admin.password;
-				cout << "CONTRASEN\u0303A VALIDA. PROCEDA A INICIAR SESIO\u0301N";
+				cout << "CONTRASENA VALIDA. PROCEDA A INICIAR SESION";
 				almacenarUsuarios(admin, supervisor);
 				menu_login(admin, supervisor);
 			} else {
-				cout << "Contrasen\u0303a incorrecta...Le restan " << intento << " Intentos\n";
+				cout << "Contrasena incorrecta...Le restan " << intento << " Intentos\n";
 				if (intento == 0) {
-					cout<<"INTENTOS MA\u0303XIMOS. REGRESANDO AL MENU PRINCIPAL";
+					cout<<"INTENTOS MAXIMOS. REGRESANDO AL MENU PRINCIPAL";
 				break;
 				}
 			}
 		} else if (strcmp(user, supervisor.username) == 0) {
-			cout << "Ingrese su contrasen\u0303a actual\n";
+			cout << "Ingrese su contrasena actual\n";
 			cin >> currentPassword;
 			if (strcmp(currentPassword, admin.password) == 0) {
-				cout << "Ingrese su nueva contrasen\u0303a\n";
+				cout << "Ingrese su nueva contrasena\n";
 				cin >> admin.password;
 				almacenarUsuarios(admin, supervisor);
-				cout << "CONTRASEN\u0303A VALIDA. PROCEDA A INICIAR SESIO\u0301N";
+				cout << "CONTRASENA VALIDA. PROCEDA A INICIAR SESION";
 				login(admin, supervisor);
 			} else {
-				cout << "Contrasen\u0303a incorrecta...Le restan " << intento << " Intentos\n";
+				cout << "Contrasena incorrecta...Le restan " << intento << " Intentos\n";
 				if (intento == 0) {
-					cout<<"INTENTOS MA\u0303XIMOS. REGRESANDO AL MENU PRINCIPAL";
+					cout<<"INTENTOS MAXIMOS. REGRESANDO AL MENU PRINCIPAL";
 				break;
 				}
 			}
 		} else{
 			cout << "Usuario invalido. Le restan " << intento << " Intentos\n";
 			if (intento == 0) {
-				cout<<"INTENTOS MA\u0303XIMOS. REGRESANDO AL MENU PRINCIPAL";
+				cout<<"INTENTOS MAXIMOS. REGRESANDO AL MENU PRINCIPAL";
 				cin.ignore();
 				getch();
 
@@ -418,33 +445,31 @@ void recoverPassword(int cargo,struct Usuario admin, struct Usuario supervisor) 
 	char user[15];
 
 	int intento = 3;
-	cout << "A continuacio\u0301n procedera\u0301 a recuperar su contrasen\u0303a\n";
+	cout << "A continuacion procedera a recuperar su contrasena\n";
 	do {
 		intento--;
 		cout << "Ingrese su usuario:\n";
 		cin >> user;
 
 		if (strcmp(user, admin.username) == 0) {
-			cout << "Su contrasen\u0303a es: "<<admin.password;
+			cout << "Su contrasena es: "<<admin.password;
 			cin.ignore();
 			getch();
 			menu_login(admin, supervisor);
 		} else if (strcmp(user, supervisor.username) == 0) {
-			cout << "Su contrasen\u0303a es: "<<supervisor.password;
+			cout << "Su contrasena es: "<<supervisor.password;
 			cin.ignore();
 			getch();
 			menu_login(admin, supervisor);
 		} else{
 			cout << "Usuario invalido. Le restan " << intento << " Intentos\n";
 			if (intento == 0) {
-				cout<<"INTENTOS MA\u0303XIMOS. REGRESANDO AL MENU PRINCIPAL";
+				cout<<"INTENTOS MAXIMOS. REGRESANDO AL MENU PRINCIPAL";
 				cin.ignore();
 				getch();
 				break;
 			}
-
 		}
-
 	} while (intento >= 0);
 
 }
@@ -452,7 +477,7 @@ void recoverPassword(int cargo,struct Usuario admin, struct Usuario supervisor) 
 void almacenarUsuarios (Usuario admin, Usuario supervisor) {
 	ofstream archivoUsuarios;
 
-	archivoUsuarios.open("usuario.dat", ios::binary);
+	archivoUsuarios.open("usuario.dat", ios::binary );
 
 	archivoUsuarios.seekp(0, ios::beg);
 	archivoUsuarios.write((char *)(&admin.username), sizeof(Usuario));
@@ -479,55 +504,130 @@ void cargarUsuarios (Usuario admin, Usuario supervisor) {
 }
 
 
-// int id_movimiento(){
-// 	int id = 0;
-// 	id++;
-// }
+void crearMovimiento (int tipo) {
 
 
-// void crearMovimiento (int tipo) {
+	Movimiento listado_movimientos[MAX];
+	cargarMovimientos(listado_movimientos);
 
-// 	int id = id_movimiento();
 
-// 	Movimiento movimiento;
+    cout<<"Ingrese el Tipo de Origen (Elija un numero) \n";
+    cout<<"1- Proveedor\n";
+    cout<<"2- Sucursal\n";
+    cin>>listado_movimientos[cant].tipo_origen;
 
-//     cout<<"Ingrese el Tipo de Origen (Elija un nu\u0303mero) \n";
-//     cout<<"1- Proveedor";
-//     cout<<"2- Sucursal";
-//     cin>>;
+	fflush(stdin);
+    cout<<"Digite el ID de origen de acuerdo al tipo de origen previamente seleccionado\n";
+    cin>>listado_movimientos[cant].id_origen;
 
-//     cout<<"Di\u0301gite el ID de origen de acuerdo al tipo de origen previamente seleccionado\n";
-//     cin>>this->id_origen;
+    cout<<"Ingrese el Tipo de Destino (Elija un numero)\n";
+    cout<<"1- Proveedor\n";
+    cout<<"2- Sucursal\n";
+    cout<<"3- Venta\n";
+    cin>>listado_movimientos[cant].tipo_destino;
 
-//     cout<<"Ingrese el Tipo de Destino (Elija un nu\u0303mero)\n";
-//     cout<<"1- Proveedor";
-//     cout<<"2- Sucursal";
-//     cout<<"3- Venta";
-//     cin>>this->tipo_destino;
+    cout<<"Digite el ID de destino de acuerdo al tipo de destino previamente seleccionado\n";
+    cin>>listado_movimientos[cant].id_destino;
 
-//     cout<<"Di\u0301gite el ID de destino de acuerdo al tipo de destino previamente seleccionado\n";
-//     cin>>this->id_destino;
+    cout<<"Digite el ID del articulo previamente existente\n";
+    cin>>listado_movimientos[cant].id_articulo;
 
-//     cout<<"Di\u0301gite el ID del articulo previamente existente\n";
-//     cin>>this->id_articulo;
+    cout<<"Escriba la cantidad de articulo que movera\n";
+    cin>>listado_movimientos[cant].cantidad;
 
-//     cout<<"Escriba la cantidad de arti\u0301 que movera\u0301\n";
-//     cin>>this->cantidad;
 
-//     cout<<"Escriba la razo\u0301 del movimiento(Elija un nu\u0301mero\n";
-//     if (tipo == 0) {
-//         cout<<"1- Compra de Arti\u0301culos\n";
-//         cout<<"2- Movimientos entre sucursales\n";
-//     } else if (tipo == 1) {
-//         cout<<"1- Venta de Arti\u0301culos\n";
-//         cout<<"2- Devolucio\u0301n\n";
-//     }
-//     cin>>this->motivo_movimiento;
+	int razonMovimiento;
+    cout<<"Escriba la razo del movimiento(Elija un numero\n";
+    if (tipo == 0) {
+        cout<<"1- Compra de Articulos\n";
+        cout<<"2- Movimientos entre sucursales\n";
+    } else if (tipo == 1) {
+        cout<<"1- Venta de Articulos\n";
+        cout<<"2- Devolucion\n";
+    }
+    cin>>razonMovimiento;
 
-//     if (tipo == 0) {
-//         this->tipo_movimiento = 'E';
-//     } else if (tipo == 1) {
-//         this->tipo_movimiento = 'S';
-//     }
-// }
+	if (tipo == 0 && razonMovimiento == 1) {
+		strcpy(listado_movimientos[cant].motivo_movimiento, "Compra de Articulos");
+	} else if (tipo == 0 && razonMovimiento == 2) {
+		strcpy(listado_movimientos[cant].motivo_movimiento, "Movimientos entre sucursales");
+	} else if (tipo == 1 && razonMovimiento == 1) {
+		strcpy(listado_movimientos[cant].motivo_movimiento, "Venta de Articulos");
+	} else if (tipo == 1 && razonMovimiento == 1) {
+		strcpy(listado_movimientos[cant].motivo_movimiento, "Devolucion");
+	}
+
+    if (tipo == 0) {
+		stpcpy(listado_movimientos[cant].tipo_movimiento, "E");
+    } else if (tipo == 1) {
+        stpcpy(listado_movimientos[cant].tipo_movimiento, "S");
+    }
+
+	cout<<"MOVIMIENTO REGISTRADO CORRECTAMENTE\n";
+	cin.ignore();
+	getch();
+
+
+	cant++;
+	almacenarMovimientos(listado_movimientos);
+	verMovimientos(listado_movimientos);
+
+}
+
+void almacenarMovimientos (Movimiento listado_movimientos[]) {
+		ofstream movimientos;
+
+	movimientos.open("movimientos.dat", ios::binary | ios::app);
+
+	movimientos.seekp(0, ios::beg);
+	for(int i=0; i<cant; i++) {
+		movimientos.write((char *)(&listado_movimientos[i].tipo_origen), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].id_origen), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].id_destino), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].id_articulo), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].cantidad), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].motivo_movimiento), sizeof(Movimiento));
+		movimientos.write((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+	}
+	movimientos.close();
+}
+
+void cargarMovimientos (Movimiento listado_movimientos[]) {
+	ifstream movimientos ("movimientos.dat", ios::binary);
+	int tam;
+	cant = 0;
+	if (movimientos.is_open()) {
+		movimientos.seekg(0, ios::end);
+		tam = movimientos.tellg();
+		cant = tam/sizeof(Movimiento);
+		movimientos.seekg(0, ios::beg);
+
+	for(int i=0;i<cant; i++) {
+
+		movimientos.read((char *)(&listado_movimientos[i].tipo_origen), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].id_origen), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].id_destino), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].id_articulo), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].cantidad), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].motivo_movimiento), sizeof(Movimiento));
+		movimientos.read((char *)(&listado_movimientos[i].tipo_destino), sizeof(Movimiento));
+	}
+		movimientos.close();
+
+	}
+
+}
+
+void verMovimientos (Movimiento movimientos[]) {
+	cout.setf(ios::left);
+	for(int i=0;i<cant;i++){
+			cout<<"Motivo:\t\t\t"<<movimientos[i].motivo_movimiento<<endl;
+			cout<<"ID Articulo:\t\t\t"<<movimientos[i].id_articulo<<endl;
+			cout<<cant;
+		}
+	cout.unsetf(ios::left);
+	}
+
 

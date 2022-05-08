@@ -6,6 +6,7 @@ using namespace std;
 
 int main()
 {
+
 	setlocale(LC_ALL, "spanish");
 	
 	Usuario admin;
@@ -18,6 +19,7 @@ int main()
 
 	cargarUsuarios(admin, supervisor);
 
+	
 	menu_login(admin, supervisor);
 	return 0;
 }

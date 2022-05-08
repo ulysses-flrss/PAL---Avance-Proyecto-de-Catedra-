@@ -21,14 +21,9 @@ struct Articulo {
         cout<<"3- Arti\u0301culos\n";
         cout<<"4- Souvenirs\n";
         cout<<"5- Arti\u0301culos religiosos\n";
-        cin>>
 
         
     }
-}
-
-int main () {
-    return 0;
 }
 
 
